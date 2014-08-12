@@ -1,6 +1,6 @@
 #Reproducible Research, Project 1  
-#Tobias Crabtree
-#Coursera, August 2014
+###Tobias Crabtree
+###Coursera, August 2014
 ========================================================
 
 ##Loading and preprocessing the data in R
@@ -8,7 +8,6 @@ Personal movement activity data was downloaded August 2014 from
 https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip
 
 The variables included in this dataset are:
-
 - steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)
 - date: The date on which the measurement was taken in YYYY-MM-DD format
 - interval: Identifier for the 5-minute interval in which measurement was taken
@@ -29,7 +28,6 @@ data <- na.omit(data) # remove missing data
 ```
 
 ## What is the mean total number of steps taken per day?
-
 ```{r fig.width=7, fig.height=6}
 require(plyr) # load required plyr package
 dataSum <- ddply(data, .(date), summarize, total=sum(steps))
@@ -40,11 +38,7 @@ dataMean
 dataMedian
 ```
 
-The mean total steps are `r dataMean`.
-The median total steps are: `r dataMedian`.
-
 ## What is the average daily activity pattern?
-
 ```{r fig.width=7, fig.height=6}
 require(plyr) # load required plyr package
 dataMeanInt <- ddply(data, .(interval), summarize, mean=mean(steps)) # calculate mean steps by day
@@ -54,9 +48,9 @@ dataMeanInt2 <- ddply(data, .(interval, steps), summarize, mean=mean(steps)) # c
 max <- max(dataMeanInt2$steps) # determine max steps
 df <- dataMeanInt2[dataMeanInt2$steps==max,] # create dataframe with max steps and interval
 interval <- df$interval
-interval
+interval ## returns 5 minute interval
 ```
-The 5-minute interval that contains the maximum steps is `r interval`.
+
 
 ## Inputting missing values
 ```{r}
