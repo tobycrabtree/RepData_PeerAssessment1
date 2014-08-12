@@ -1,0 +1,87 @@
+#Reproducible Research, Project 1  
+#Tobias Crabtree
+#Coursera, August 2014
+========================================================
+
+##Loading and preprocessing the data in R
+Personal movement activity data was downloaded August 2014 from 
+https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip
+
+The variables included in this dataset are:
+
+- steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)
+- date: The date on which the measurement was taken in YYYY-MM-DD format
+- interval: Identifier for the 5-minute interval in which measurement was taken
+
+The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
+
+Transformations to the data include:
+- Changed class to dates
+- Removed missing data (i.e., steps has 2304 NA's)
+
+```{r}
+require(knitr)
+data <- read.csv("activity.csv") #read data 
+summary(data) # review data
+data$date <- as.Date(data$date,"%Y-%m-%d") # transform dates
+data <- na.omit(data) # remove missing data 
+
+```
+
+## What is the mean total number of steps taken per day?
+
+```{r fig.width=7, fig.height=6}
+require(plyr) # load required plyr package
+dataSum <- ddply(data, .(date), summarize, total=sum(steps))
+hist(dataSum$total, main="Total number of steps taken by day", xlab="Total number of steps by day")
+dataMean <- ddply(data, .(date), summarize, mean=mean(steps)) # calculate mean steps by day
+dataMedian <- ddply(data, .(date), summarize, median=median(steps)) # calculate mean steps by day
+dataMean
+dataMedian
+```
+
+The mean total steps are `r dataMean`.
+The median total steps are: `r dataMedian`.
+
+## What is the average daily activity pattern?
+
+```{r fig.width=7, fig.height=6}
+require(plyr) # load required plyr package
+dataMeanInt <- ddply(data, .(interval), summarize, mean=mean(steps)) # calculate mean steps by day
+plot(dataMeanInt$interval, dataMeanInt$mean, type="l", main="Average Daily Activity Pattern", 
+     xlab="5 minute interval", ylab="Avg. # of Steps")
+dataMeanInt2 <- ddply(data, .(interval, steps), summarize, mean=mean(steps)) # calculate mean steps by day
+max <- max(dataMeanInt2$steps) # determine max steps
+df <- dataMeanInt2[dataMeanInt2$steps==max,] # create dataframe with max steps and interval
+interval <- df$interval
+interval
+```
+The 5-minute interval that contains the maximum steps is `r interval`.
+
+## Inputting missing values
+```{r}
+data2 <- read.csv("activity.csv") #read data 
+na <- sum(is.na(data2)) # returns #'s of missing values
+na
+
+# fill in missing values with mean and create a new dataset
+data2$steps[is.na(data2$steps)] <- ???? 
+
+# create a histogram
+data2Sum <- ddply(data2, .(date), summarize, total=sum(steps))
+hist(data2Sum$total, main="Total number of steps taken by day", 
+     xlab="Total number of steps by day")
+data2Mean <- ddply(data2Sum, .(date), summarize, mean=mean(steps)) 
+data2Median <- ddply(data2Sum, .(date), summarize, median=median(steps))  
+data2Mean
+data2Median
+
+```
+The total missing values is `r na`.
+
+## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+weekday <- subset(data, select=weekdays(date))
+weekend <- 
+```
+
