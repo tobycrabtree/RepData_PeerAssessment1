@@ -31,47 +31,51 @@ data <- na.omit(data) # remove missing data
 ```{r fig.width=7, fig.height=6}
 require(plyr) # load required plyr package
 dataSum <- ddply(data, .(date), summarize, total=sum(steps))
-hist(dataSum$total, main="Total number of steps taken by day", xlab="Total number of steps by day")
-dataMean <- ddply(data, .(date), summarize, mean=mean(steps)) # calculate mean steps by day
-dataMedian <- ddply(data, .(date), summarize, median=median(steps)) # calculate mean steps by day
-dataMean
-dataMedian
+dev.copy(png,"totalsteps.png")
+hist(dataSum$total, main="Total number of steps taken by day", 
+     xlab="Total number of steps by day", col="white")
+dev.off()
+
+mean(dataSum$total)
+median(dataSum$total)
 ```
 
 ## What is the average daily activity pattern?
 ```{r fig.width=7, fig.height=6}
 require(plyr) # load required plyr package
 dataMeanInt <- ddply(data, .(interval), summarize, mean=mean(steps)) # calculate mean steps by day
+dev.copy(png,"avgdailyactivity.png")
 plot(dataMeanInt$interval, dataMeanInt$mean, type="l", main="Average Daily Activity Pattern", 
      xlab="5 minute interval", ylab="Avg. # of Steps")
+dev.off()
 dataMeanInt2 <- ddply(data, .(interval, steps), summarize, mean=mean(steps)) # calculate mean steps by day
 max <- max(dataMeanInt2$steps) # determine max steps
 df <- dataMeanInt2[dataMeanInt2$steps==max,] # create dataframe with max steps and interval
 interval <- df$interval
-interval ## returns 5 minute interval
+interval ## returns 5 minute interval with the max amount of steps
 ```
 
 
 ## Inputting missing values
 ```{r}
-data2 <- read.csv("activity.csv") #read data 
-na <- sum(is.na(data2)) # returns #'s of missing values
-na
+data2 <- read.csv("activity.csv") #re-read data as previously removed missing values
+sum(is.na(data2)) # returns #'s of missing values
 
-# fill in missing values with mean and create a new dataset
-data2$steps[is.na(data2$steps)] <- ???? 
+# fill in missing values with mean # of steps and create a new dataset
+data2$steps[is.na(data2$steps)] <- mean(data2$steps, na.rm=TRUE)
 
 # create a histogram
 data2Sum <- ddply(data2, .(date), summarize, total=sum(steps))
+dev.copy(png,"totalsteps2.png")
 hist(data2Sum$total, main="Total number of steps taken by day", 
-     xlab="Total number of steps by day")
-data2Mean <- ddply(data2Sum, .(date), summarize, mean=mean(steps)) 
-data2Median <- ddply(data2Sum, .(date), summarize, median=median(steps))  
-data2Mean
-data2Median
+     xlab="Total number of steps by day", col="white")
+dev.off()
+
+mean(data2Sum$total)
+median(data2Sum$total)
 
 ```
-The total missing values is `r na`.
+By inputting missing values the mean and median now converge to be the same #.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r}
