@@ -53,24 +53,11 @@ require(plyr) # load required plyr package
 
 ```r
 dataSum <- ddply(data, .(date), summarize, total=sum(steps))
-dev.copy(png,"totalsteps.png")
-```
-
-```
-## quartz_off_screen 
-##                 3
-```
-
-```r
 hist(dataSum$total, main="Total number of steps taken by day", 
-     xlab="Total number of steps by day", col="white")
-dev.off()
+     xlab="Total number of steps by day", col="white", bg="white")
 ```
 
-```
-## pdf 
-##   2
-```
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
 
 ```r
 mean(dataSum$total)
@@ -93,31 +80,17 @@ median(dataSum$total)
 ```r
 require(plyr) # load required plyr package
 dataMeanInt <- ddply(data, .(interval), summarize, mean=mean(steps)) # calculate mean steps by day
-dev.copy(png,"avgdailyactivity.png")
-```
-
-```
-## quartz_off_screen 
-##                 3
-```
-
-```r
 plot(dataMeanInt$interval, dataMeanInt$mean, type="l", main="Average Daily Activity Pattern", 
-     xlab="5 minute interval", ylab="Avg. # of Steps")
-dev.off()
+     xlab="5 minute interval", ylab="Avg. # of Steps", bg="white")
 ```
 
-```
-## pdf 
-##   2
-```
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
 
 ```r
 dataMeanInt2 <- ddply(data, .(interval, steps), summarize, mean=mean(steps)) # calculate mean steps by day
 max <- max(dataMeanInt2$steps) # determine max steps
 df <- dataMeanInt2[dataMeanInt2$steps==max,] # create dataframe with max steps and interval
-interval <- df$interval
-interval ## returns 5 minute interval with the max amount of steps
+df$interval ## returns 5 minute interval with the max amount of steps
 ```
 
 ```
@@ -142,16 +115,13 @@ data2$steps[is.na(data2$steps)] <- mean(data2$steps, na.rm=TRUE)
 
 # create a histogram
 data2Sum <- ddply(data2, .(date), summarize, total=sum(steps))
-#dev.copy(png,"totalsteps2.png")
 hist(data2Sum$total, main="Total number of steps taken by day", 
-     xlab="Total number of steps by day", col="white")
+     xlab="Total number of steps by day", col="white", bg="white")
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+![plot of chunk missingvalues](figure/missingvalues.png) 
 
 ```r
-#dev.off()
-
 mean(data2Sum$total)
 ```
 
@@ -170,4 +140,32 @@ By inputting missing values the mean and median now converge to be the same #.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+```r
+require(ggplot2)
+```
+
+```
+## Loading required package: ggplot2
+```
+
+```r
+data2$date <- as.Date(data2$date,"%Y-%m-%d") # transform dates
+data2$day <- as.factor(weekdays(data2$date)) # add day of week to data set
+data2$weekend <- NA # add column for weekend
+data2$steps[is.na(data2$steps)] <- mean(data2$steps, na.rm=TRUE) # fill in missing values
+# loop through data set adding a column for weekend or weekday
+for (i in 1:nrow(data2)) {
+        if (data2[i,]$day %in% c("Saturday","Sunday")) {
+        data2[i,]$weekend<-"weekend"
+} else{
+        data2[i,]$weekend<-"weekday"
+}
+}
+data2weekend <- ddply(data2, .(interval, weekend), summarize, mean=mean(steps)) # calculate mean steps by day
+ggplot(data2weekend, aes(interval, mean)) + geom_line(color="blue") + 
+        facet_grid(weekend~.) +
+        labs(x="Interval", y="Number of Steps")
+```
+
+![plot of chunk weekends](figure/weekends.png) 
 

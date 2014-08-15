@@ -28,7 +28,7 @@ data <- na.omit(data) # remove missing data
 ```
 
 ## What is the mean total number of steps taken per day?
-```{r meantotalstep fig.width=7, fig.height=6}
+```{r totalsteps fig.width=7, fig.height=6}
 require(plyr) # load required plyr package
 dataSum <- ddply(data, .(date), summarize, total=sum(steps))
 hist(dataSum$total, main="Total number of steps taken by day", 
@@ -39,7 +39,7 @@ median(dataSum$total)
 ```
 
 ## What is the average daily activity pattern?
-```{r avgdailyactivity fig.width=7, fig.height=6}
+```{r dailyactivity fig.width=7, fig.height=6}
 require(plyr) # load required plyr package
 dataMeanInt <- ddply(data, .(interval), summarize, mean=mean(steps)) # calculate mean steps by day
 plot(dataMeanInt$interval, dataMeanInt$mean, type="l", main="Average Daily Activity Pattern", 
