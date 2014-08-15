@@ -117,7 +117,7 @@ dataMeanInt2 <- ddply(data, .(interval, steps), summarize, mean=mean(steps)) # c
 max <- max(dataMeanInt2$steps) # determine max steps
 df <- dataMeanInt2[dataMeanInt2$steps==max,] # create dataframe with max steps and interval
 interval <- df$interval
-interval ## returns 5 minute interval
+interval ## returns 5 minute interval with the max amount of steps
 ```
 
 ```
@@ -142,26 +142,16 @@ data2$steps[is.na(data2$steps)] <- mean(data2$steps, na.rm=TRUE)
 
 # create a histogram
 data2Sum <- ddply(data2, .(date), summarize, total=sum(steps))
-dev.copy(png,"totalsteps2.png")
-```
-
-```
-## quartz_off_screen 
-##                 3
-```
-
-```r
+#dev.copy(png,"totalsteps2.png")
 hist(data2Sum$total, main="Total number of steps taken by day", 
      xlab="Total number of steps by day", col="white")
-dev.off()
 ```
 
-```
-## pdf 
-##   2
-```
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 
 ```r
+#dev.off()
+
 mean(data2Sum$total)
 ```
 
